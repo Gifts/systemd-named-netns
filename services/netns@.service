@@ -13,14 +13,13 @@ WantedBy=multi-user.target
 Type=oneshot
 RemainAfterExit=yes
 PrivateNetwork=yes
+PrivateMounts=no
 
 # precaution
 ExecStartPre=-/usr/bin/env ip netns delete %I
 
 # set up netns and bind it to this service
-ExecStart=/usr/bin/flock --no-fork -- /var/run/netns.lock /usr/bin/env ip netns add %I
-ExecStart=/usr/bin/env umount /var/run/netns/%I
-ExecStart=/usr/bin/env mount --bind /proc/self/ns/net /var/run/netns/%I
+ExecStart=/usr/bin/env sh -c '/usr/bin/env ip netns attach %I $$$$'
 
 # start hook
 ExecStart=/usr/bin/env netnsinit raw %I up outside
